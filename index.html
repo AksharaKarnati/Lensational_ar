@@ -4,15 +4,12 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>Lensational AR</title>
+    <title>Lensational AR - Info Box</title>
 
-    <!-- Three.js should be loaded first -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-
-    <!-- MindAR - AR engine -->
+    <!-- MindAR & Three.js -->
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.1.4/dist/mindar-image-three.prod.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/mind-ar@1.1.4/dist/mindar-image-three.prod.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
     <style>
         body,
@@ -30,36 +27,51 @@
 </head>
 
 <body>
-    <!-- Container for AR content -->
     <div id="container"></div>
 
     <script>
-        window.onload = async () => {
-            // Initialize MindAR
+        const start = async () => {
             const mindarThree = new window.MINDAR.IMAGE.MindARThree({
                 container: document.querySelector("#container"),
-                imageTargetSrc: "./assets/target.mind"
+                imageTargetSrc: './assets/target.mind' // Your target.mind file (e.g., tree)
             });
 
             const { renderer, scene, camera } = mindarThree;
-
-            // Create an anchor (linked to first image target)
             const anchor = mindarThree.addAnchor(0);
 
-            // Create a 3D cube
-            const geometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
-            const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-            const cube = new THREE.Mesh(geometry, material);
-            anchor.group.add(cube);
+            // Create a 2D canvas texture with info
+            const canvas = document.createElement('canvas');
+            canvas.width = 512;
+            canvas.height = 256;
+            const ctx = canvas.getContext('2d');
 
-            // Start AR
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = '#000000';
+            ctx.font = 'bold 28px Arial';
+            ctx.fillText('Tree: Neem', 20, 60);
+            ctx.font = '20px Arial';
+            ctx.fillText('Benefits: Purifies air, medicinal', 20, 120);
+
+            const texture = new THREE.CanvasTexture(canvas);
+
+            const infoPlane = new THREE.Mesh(
+                new THREE.PlaneGeometry(1.5, 0.75), // Width and height in AR units
+                new THREE.MeshBasicMaterial({ map: texture, transparent: true })
+            );
+
+            infoPlane.position.set(0, 0, 0); // Centered on image target
+            anchor.group.add(infoPlane);
+
             await mindarThree.start();
 
-            // Animation loop
             renderer.setAnimationLoop(() => {
                 renderer.render(scene, camera);
             });
         };
+
+        start();
     </script>
 </body>
 
