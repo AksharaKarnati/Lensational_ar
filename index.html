@@ -4,16 +4,19 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Lensational AR - Info Box</title>
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Lensational AR</title>
 
-    <!-- MindAR & Three.js -->
+    <!-- MindAR (AR engine) -->
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.1.4/dist/mindar-image-three.prod.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/mind-ar@1.1.4/dist/mindar-image-three.prod.css" rel="stylesheet" />
+
+    <!-- Three.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
     <style>
-        body,
-        html {
+        html,
+        body {
             margin: 0;
             padding: 0;
             overflow: hidden;
@@ -33,37 +36,23 @@
         const start = async () => {
             const mindarThree = new window.MINDAR.IMAGE.MindARThree({
                 container: document.querySelector("#container"),
-                imageTargetSrc: './assets/target.mind' // Your target.mind file (e.g., tree)
+                imageTargetSrc: './assets/target.mind'
             });
 
             const { renderer, scene, camera } = mindarThree;
+
             const anchor = mindarThree.addAnchor(0);
 
-            // Create a 2D canvas texture with info
-            const canvas = document.createElement('canvas');
-            canvas.width = 512;
-            canvas.height = 256;
-            const ctx = canvas.getContext('2d');
+            // Create a yellow 2D info box using a plane
+            const planeGeometry = new THREE.PlaneGeometry(1, 0.5); // width, height
+            const planeMaterial = new THREE.MeshBasicMaterial({ color: 0xffff00, side: THREE.DoubleSide });
+            const infoPlane = new THREE.Mesh(planeGeometry, planeMaterial);
 
-            ctx.fillStyle = '#ffffff';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            ctx.fillStyle = '#000000';
-            ctx.font = 'bold 28px Arial';
-            ctx.fillText('Tree: Neem', 20, 60);
-            ctx.font = '20px Arial';
-            ctx.fillText('Benefits: Purifies air, medicinal', 20, 120);
-
-            const texture = new THREE.CanvasTexture(canvas);
-
-            const infoPlane = new THREE.Mesh(
-                new THREE.PlaneGeometry(1.5, 0.75), // Width and height in AR units
-                new THREE.MeshBasicMaterial({ map: texture, transparent: true })
-            );
-
-            infoPlane.position.set(0, 0, 0); // Centered on image target
+            // Position the plane
+            infoPlane.position.set(0, 0.3, 0);
             anchor.group.add(infoPlane);
 
+            // Start AR engine
             await mindarThree.start();
 
             renderer.setAnimationLoop(() => {
