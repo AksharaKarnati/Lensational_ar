@@ -7,11 +7,11 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Lensational AR</title>
 
-    <!-- MindAR (AR engine) -->
+    <!-- MindAR - AR engine -->
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.1.4/dist/mindar-image-three.prod.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/mind-ar@1.1.4/dist/mindar-image-three.prod.css" rel="stylesheet" />
 
-    <!-- Three.js (Make sure Three.js is loaded first) -->
+    <!-- Three.js - 3D graphics library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
     <style>
@@ -39,7 +39,7 @@
             // Correct initialization of MindARThree
             const mindarThree = new window.MINDAR.IMAGE.MindARThree({
                 container: document.querySelector("#container"), // Attach to HTML container
-                imageTargetSrc: './assets/target.mind' // Path to your target.mind file
+                imageTargetSrc: './assets/target.mind' // Path to your target.mind file (tree image)
             });
 
             const { renderer, scene, camera } = mindarThree;
@@ -50,8 +50,8 @@
             // Create a 3D cube
             const geometry = new THREE.BoxGeometry(0.5, 0.5, 0.5); // Cube size
             const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 }); // Green material
-            const cube = new THREE.Mesh(geometry, material);
-            anchor.group.add(cube); // Add cube to the anchor
+            const cube = new THREE.Mesh(geometry, material); // Create the cube mesh
+            anchor.group.add(cube); // Add the cube to the anchor
 
             // Start the AR
             await mindarThree.start();
@@ -62,6 +62,7 @@
             });
         };
 
+        // Start the AR scene
         start();
     </script>
 </body>
