@@ -2,28 +2,39 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Lensational AR</title>
 
-    <!-- MindAR - AR library -->
+    <!-- MindAR (AR engine) -->
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.1.4/dist/mindar-image-three.prod.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/mind-ar@1.1.4/dist/mindar-image-three.prod.css" rel="stylesheet" />
 
-    <!-- Three.js - 3D graphics library -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        #container {
+            width: 100vw;
+            height: 100vh;
+        }
+    </style>
 </head>
 
 <body>
     <!-- Container for AR content -->
-    <div id="container" style="width: 100vw; height: 100vh;"></div>
+    <div id="container"></div>
 
     <script>
         // Initialize MindAR and create the AR scene
         const start = async () => {
-            // Initialize MindAR
-            const mindarThree = new MindARThree({
+            // Correct initialization of MindARThree
+            const mindarThree = new window.MINDAR.IMAGE.MindARThree({
                 container: document.querySelector("#container"), // Attach to HTML container
                 imageTargetSrc: './assets/target.mind' // Path to your target.mind file
             });
@@ -48,7 +59,6 @@
             });
         };
 
-        // Start the AR scene
         start();
     </script>
 </body>
