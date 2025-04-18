@@ -2,14 +2,17 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Lensational AR</title>
 
-    <!-- MindAR - AR engine (includes Three.js, so no need for separate Three.js script) -->
+    <!-- MindAR (AR engine) -->
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.1.4/dist/mindar-image-three.prod.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/mind-ar@1.1.4/dist/mindar-image-three.prod.css" rel="stylesheet" />
+
+    <!-- Three.js (Make sure Three.js is loaded first) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
     <style>
         body,
@@ -17,66 +20,49 @@
             margin: 0;
             padding: 0;
             overflow: hidden;
-            font-family: Arial, sans-serif;
         }
 
         #container {
             width: 100vw;
             height: 100vh;
         }
-
-        h1 {
-            text-align: center;
-            color: white;
-            z-index: 1000;
-            position: absolute;
-            top: 10px;
-            width: 100%;
-        }
     </style>
 </head>
 
 <body>
-    <!-- Optional heading for instructions -->
-    <h1>Scan the Tree Image</h1>
-
-    <!-- AR Container -->
     <div id="container"></div>
 
     <script>
-        // Function to initialize and start the AR experience
+        // Initialize MindAR and create the AR scene
         const start = async () => {
-            // Initialize MindAR and create the AR scene
             const mindarThree = new window.MINDAR.IMAGE.MindARThree({
                 container: document.querySelector("#container"),
-                imageTargetSrc: './assets/target.mind' // Path to your target.mind file
+                imageTargetSrc: './assets/target.mind'
             });
 
-            // Get references to the renderer, scene, and camera from MindAR
-            const { renderer, scene, camera, THREE } = mindarThree; // Destructure THREE from mindarThree
+            const { renderer, scene, camera } = mindarThree;
 
-            // Add anchor for AR content (this is where your AR objects will appear)
+            // Create an anchor for the AR content
             const anchor = mindarThree.addAnchor(0);
 
-            // ✅ Create 2D "info box" as a plane (using THREE from MindAR directly)
+            // ✅ Create 2D "info box" as a plane
             const planeGeometry = new THREE.PlaneGeometry(1, 0.5); // width, height
             const planeMaterial = new THREE.MeshBasicMaterial({ color: 0xffff00 });
             const infoPlane = new THREE.Mesh(planeGeometry, planeMaterial);
 
             // Position the plane above the marker
-            infoPlane.position.set(0, 0.3, 0);  // Adjust this for visibility
-            anchor.group.add(infoPlane);  // ✅ Only 3D objects like Mesh allowed
+            infoPlane.position.set(0, 0.3, 0);
+            anchor.group.add(infoPlane); // ✅ Only 3D objects like Mesh allowed
 
-            // Start the AR session
+            // Start AR
             await mindarThree.start();
 
-            // Render the scene with the animation loop
+            // Keep rendering the AR scene
             renderer.setAnimationLoop(() => {
                 renderer.render(scene, camera);
             });
         };
 
-        // Start the AR functionality
         start();
     </script>
 </body>
