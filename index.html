@@ -2,15 +2,55 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Lensational AR</title>
-    <link rel="stylesheet" href="style.css" />
+
+    <!-- MindAR - AR library -->
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.1.4/dist/mindar-image-three.prod.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/mind-ar@1.1.4/dist/mindar-image-three.prod.css" rel="stylesheet" />
+
+    <!-- Three.js - 3D graphics library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 
 <body>
-    <h1>Lensational AR Loading...</h1>
-    <script src="script.js"></script>
+    <!-- Container for AR content -->
+    <div id="container" style="width: 100vw; height: 100vh;"></div>
+
+    <script>
+        // Initialize MindAR and create the AR scene
+        const start = async () => {
+            // Initialize MindAR
+            const mindarThree = new MindARThree({
+                container: document.querySelector("#container"), // Attach to HTML container
+                imageTargetSrc: './assets/target.mind' // Path to your target.mind file
+            });
+
+            const { renderer, scene, camera } = mindarThree;
+
+            // Create an anchor for the AR content
+            const anchor = mindarThree.addAnchor(0);
+
+            // Create a 3D cube
+            const geometry = new THREE.BoxGeometry(0.5, 0.5, 0.5); // Cube size
+            const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 }); // Green material
+            const cube = new THREE.Mesh(geometry, material);
+            anchor.group.add(cube); // Add cube to the anchor
+
+            // Start the AR
+            await mindarThree.start();
+
+            // Set animation loop to keep rendering the AR scene
+            renderer.setAnimationLoop(() => {
+                renderer.render(scene, camera);
+            });
+        };
+
+        // Start the AR scene
+        start();
+    </script>
 </body>
 
 </html>
