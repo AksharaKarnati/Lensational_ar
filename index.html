@@ -7,26 +7,43 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Lensational AR</title>
 
+    <!-- Three.js (load before MindAR) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
     <!-- MindAR - AR engine -->
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.1.4/dist/mindar-image-three.prod.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/mind-ar@1.1.4/dist/mindar-image-three.prod.css" rel="stylesheet" />
 
-    <!-- Removed unnecessary Three.js import since MindAR includes it -->
+    <style>
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        #container {
+            width: 100vw;
+            height: 100vh;
+        }
+    </style>
 </head>
 
 <body>
     <!-- Container for AR content -->
-    <div id="container" style="width: 100vw; height: 100vh;"></div>
+    <div id="container"></div>
 
     <script>
         const start = async () => {
+            // Initialize MindAR and create the AR scene
             const mindarThree = new window.MINDAR.IMAGE.MindARThree({
                 container: document.querySelector("#container"),
-                imageTargetSrc: './assets/target.mind' // Make sure your target.mind file is in the correct path
+                imageTargetSrc: './assets/target.mind' // Path to your target.mind file
             });
 
             const { renderer, scene, camera } = mindarThree;
 
+            // Add anchor for AR content
             const anchor = mindarThree.addAnchor(0);
 
             // ✅ Create 2D "info box" as a plane
@@ -35,16 +52,19 @@
             const infoPlane = new THREE.Mesh(planeGeometry, planeMaterial);
 
             // Position the plane above the marker
-            infoPlane.position.set(0, 0.3, 0);
-            anchor.group.add(infoPlane); // ✅ Only 3D objects like Mesh allowed
+            infoPlane.position.set(0, 0.3, 0);  // Adjust this for visibility
+            anchor.group.add(infoPlane);  // ✅ Only 3D objects like Mesh allowed
 
+            // Start the AR session
             await mindarThree.start();
 
+            // Render the scene
             renderer.setAnimationLoop(() => {
                 renderer.render(scene, camera);
             });
         };
-        start();
+
+        start();  // Start AR
     </script>
 </body>
 
