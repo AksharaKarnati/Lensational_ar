@@ -4,15 +4,14 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Lensational AR</title>
 
-    <!-- MindAR (AR engine) -->
+    <!-- Load Three.js FIRST -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <!-- MindAR (THEN load MindAR.js) -->
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.1.4/dist/mindar-image-three.prod.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/mind-ar@1.1.4/dist/mindar-image-three.prod.css" rel="stylesheet" />
-
-    <!-- Three.js (Make sure Three.js is loaded first) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
     <style>
         body,
@@ -30,57 +29,46 @@
 </head>
 
 <body>
-
-    <!-- Container for AR content -->
     <div id="container"></div>
 
     <script>
         const start = async () => {
-            // Initialize MindARThree
             const mindarThree = new window.MINDAR.IMAGE.MindARThree({
                 container: document.querySelector("#container"),
-                imageTargetSrc: './assets/target.mind' // Path to your target.mind file
+                imageTargetSrc: "./assets/target.mind"
             });
 
             const { renderer, scene, camera } = mindarThree;
 
-            // Create an anchor for the AR content (this is where your AR objects will go)
             const anchor = mindarThree.addAnchor(0);
 
-            // ✅ Create 2D "info box" as a plane
-            const planeGeometry = new THREE.PlaneGeometry(1, 0.5); // width, height
+            // 2D yellow info box
+            const planeGeometry = new THREE.PlaneGeometry(1, 0.5);
             const planeMaterial = new THREE.MeshBasicMaterial({ color: 0xffff00 });
             const infoPlane = new THREE.Mesh(planeGeometry, planeMaterial);
-
-            // Position the plane above the marker
             infoPlane.position.set(0, 0.3, 0);
-            anchor.group.add(infoPlane); // Add the info box to the anchor
+            anchor.group.add(infoPlane);
 
-            // Listen for when the target is found or lost
-            mindarThree.onTargetFound = () => {
+            // 🔍 Detect when target is found/lost
+            anchor.onTargetFound = () => {
                 console.log("Target found!");
-                // Change color or update text when target is found
-                infoPlane.material.color.set(0x00ff00); // Green color when target is found
+                infoPlane.material.color.set(0x00ff00); // green
             };
 
-            mindarThree.onTargetLost = () => {
+            anchor.onTargetLost = () => {
                 console.log("Target lost!");
-                infoPlane.material.color.set(0xff0000); // Red color when target is lost
+                infoPlane.material.color.set(0xff0000); // red
             };
 
-            // Start MindAR
             await mindarThree.start();
 
-            // Set up the animation loop
             renderer.setAnimationLoop(() => {
                 renderer.render(scene, camera);
             });
         };
 
-        // Call the start function to initialize the AR scene
         start();
     </script>
-
 </body>
 
 </html>
